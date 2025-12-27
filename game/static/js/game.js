@@ -3,7 +3,7 @@ const GRID_SIZE = 10;
 const CELL_SIZE = 50;
 const PLAYER_HEALTH = 100;
 const AI_HEALTH = 100;
-const DAMAGE = 25;
+const DAMAGE = 10;
 
 // Game State
 let gameState = {
@@ -71,7 +71,7 @@ function initGame() {
     startNewMatch();
     
     console.log("⚡ ULTRA-FAST AI Game Started!");
-    console.log("AI reacts at human speed (100-200ms)");
+    console.log("AI reacts ultra-ultra-fast (10ms)");
 }
 
 // Create 10x10 grid
@@ -198,16 +198,16 @@ function triggerAIReaction() {
     // Calculate time since AI's last move
     const timeSinceLastMove = Date.now() - aiLastMoveTime;
     
-    // If AI just moved recently, wait a bit
-    if (timeSinceLastMove < 50) return;
+    // If AI just moved recently, wait a tiny bit (10ms)
+    if (timeSinceLastMove < 10) return;
     
     // Cancel any pending AI move
     if (aiReactionTimer) {
         clearTimeout(aiReactionTimer);
     }
     
-    // Schedule AI reaction (very fast!)
-    const reactionDelay = Math.max(30, Math.random() * 80); // 30-110ms
+    // Schedule AI reaction (fixed 10ms)
+    const reactionDelay = 10; // fixed 10ms
     
     aiReactionTimer = setTimeout(() => {
         aiMove();
@@ -223,7 +223,7 @@ function startAIThinking() {
         clearInterval(aiMoveInterval);
     }
     
-    // AI thinks at ULTRA-FAST intervals (20ms checks)
+    // AI thinks at ULTRA-FAST intervals (10ms checks)
     aiMoveInterval = setInterval(() => {
         if (!gameState.gameActive || aiIsThinking) return;
         
@@ -233,22 +233,22 @@ function startAIThinking() {
             aiMove();
         }
         
-        // Even if not time for scheduled move, AI might want to react to player
+        // Even if not time for scheduled move, AI might want to react to player (10ms window)
         const timeSincePlayerMove = now - playerLastMoveTime;
-        if (timeSincePlayerMove < 200 && timeSincePlayerMove > 50) {
+        if (timeSincePlayerMove < 20 && timeSincePlayerMove > 10) {
             // Player moved recently, AI might want to react
-            if (Math.random() < 0.3) {
+            if (Math.random() < 0.6) {
                 triggerAIReaction();
             }
         }
-    }, 20); // Check every 20ms (50 times per second!)
+    }, 10); // Check every 10ms (100 times per second!)
 }
 
 // Schedule next AI move
 function scheduleAIMove(delay = null) {
     if (!delay) {
-        // Very short delays for fast AI
-        delay = 80 + Math.random() * 120; // 80-200ms
+        // Fixed 10ms delay for ultra-ultra-fast AI
+        delay = 10; // 10ms
     }
     aiNextMoveTime = Date.now() + delay;
 }
@@ -294,8 +294,8 @@ function aiMove() {
                 console.log(`⚡ AI: ${data.action} (${data.mode}, ${processingTime}ms)`);
                 executeAIAction(data.action);
                 
-                // Schedule next move with very short delay
-                const nextDelay = 60 + Math.random() * 90; // 60-150ms
+                // Schedule next move promptly (10ms)
+                const nextDelay = 10; // 10ms
                 scheduleAIMove(nextDelay);
             }
         }
@@ -303,7 +303,7 @@ function aiMove() {
     .catch(error => {
         console.error('AI move error:', error);
         aiIsThinking = false;
-        scheduleAIMove(100); // Retry after 100ms
+        scheduleAIMove(10); // Retry after 10ms
     });
 }
 
@@ -409,7 +409,7 @@ function shoot(shooter) {
     const dx = targetX - startX;
     const dy = targetY - startY;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    const duration = Math.min(300, distance * 2); // Faster bullets!
+    const duration = 10; // Instant bullets (10ms)
     
     // Animate bullet
     bullet.animate([
@@ -569,13 +569,13 @@ function startNewMatch() {
     gameState.gameActive = true;
     
     // Start AI thinking (ULTRA FAST)
-    aiNextMoveTime = Date.now() + 100; // First move after 100ms
+    aiNextMoveTime = Date.now() + 10; // First move after 10ms
     startAIThinking();
     
     // Focus game container
     document.getElementById('game-container').focus();
     
-    console.log(`AI will start in 100ms, checking every 20ms!`);
+    console.log(`AI will start in 10ms, checking every 10ms!`);
 }
 
 // Initialize game when page loads
@@ -595,8 +595,8 @@ setInterval(() => {
     const now = Date.now();
     const timeSinceAIMove = now - aiLastMoveTime;
     
-    if (timeSinceAIMove > 500 && !aiIsThinking) {
-        // AI hasn't moved in a while, trigger a move
+    if (timeSinceAIMove > 50 && !aiIsThinking) {
+        // AI hasn't moved in a short time, trigger a move
         triggerAIReaction();
     }
-}, 1000);
+}, 100);

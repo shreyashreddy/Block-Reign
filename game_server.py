@@ -26,12 +26,12 @@ class UltraFastAI:
         self.action_to_idx = {a: i for i, a in enumerate(self.actions)}
         self.idx_to_action = {i: a for i, a in enumerate(self.actions)}
         
-        # Reaction time parameters (human: 150-250ms for simple tasks)
-        self.base_reaction_time = 0.10  # 100ms base reaction
-        self.reaction_variance = 0.05   # ±50ms variance
+        # Reaction time parameters (forced 10ms AI)
+        self.base_reaction_time = 0.01  # 10ms base reaction
+        self.reaction_variance = 0.0    # no variance (fixed)
         
         # Thinking speed (how fast AI processes decisions)
-        self.thinking_speed = 0.85  # 0-1, higher = faster thinking
+        self.thinking_speed = 0.995  # near-instant thinking
         
         # Q-learning parameters (optimized for fast learning)
         self.q_table = {}
@@ -150,11 +150,9 @@ class UltraFastAI:
         # Adjust based on thinking speed
         reaction *= (1.5 - self.thinking_speed)  # Faster thinking = faster reaction
         
-        # Add random variance (±50ms)
-        reaction += random.uniform(-self.reaction_variance, self.reaction_variance)
-        
-        # Clamp to reasonable values (50ms - 300ms)
-        reaction = max(0.05, min(0.3, reaction))
+        # No variance — enforce fixed 10ms reaction
+        # (Overrides other multipliers to ensure 10ms timing)
+        reaction = 0.01
         
         return reaction
     
@@ -263,10 +261,10 @@ class UltraFastAI:
         
         if winner == 'ai':
             self.wins += 1
-            # Winning makes AI faster and more aggressive
-            self.thinking_speed = min(0.95, self.thinking_speed + 0.02)
-            self.aggression = min(1.0, self.aggression + 0.03)
-            self.base_reaction_time = max(0.07, self.base_reaction_time - 0.002)
+            # Winning makes AI slightly faster and more aggressive (floor at 10ms)
+            self.thinking_speed = min(0.999, self.thinking_speed + 0.004)
+            self.aggression = min(1.0, self.aggression + 0.01)
+            self.base_reaction_time = max(0.01, self.base_reaction_time - 0.001)
         else:
             self.losses += 1
             # Losing makes AI more cautious
@@ -410,8 +408,8 @@ class UltraFastAI:
                 self.losses = model_data.get('losses', 0)
                 self.total_matches = model_data.get('total_matches', 0)
                 self.aggression = model_data.get('aggression', 0.7)
-                self.thinking_speed = model_data.get('thinking_speed', 0.85)
-                self.base_reaction_time = model_data.get('base_reaction_time', 0.10)
+                self.thinking_speed = model_data.get('thinking_speed', 0.995)
+                self.base_reaction_time = model_data.get('base_reaction_time', 0.01)
                 self.total_moves = model_data.get('total_moves', 0)
                 
                 print(f"✅ Loaded ULTRA-FAST AI")
@@ -523,7 +521,7 @@ def ai_status():
         'reaction_time_ms': ai.base_reaction_time * 1000,
         'total_experience': ai.total_moves,
         'learning_method': 'ULTRA-FAST Q-Learning',
-        'target_speed': 'Human-like (100-200ms)'
+        'target_speed': 'Ultra-ultra-fast (10ms)'
     })
 
 if __name__ == '__main__':
@@ -531,10 +529,10 @@ if __name__ == '__main__':
     print("⚡ ULTRA-FAST AI - HUMAN SPEED REACTION")
     print("="*70)
     print("PERFORMANCE:")
-    print("  • Target Reaction: 100ms ±50ms")
-    print("  • Thinking Speed: 85% of maximum")
-    print("  • State Recognition: 50ms")
-    print("  • Learning Speed: 2x normal")
+    print("  • Target Reaction: 10ms (fixed)")
+    print("  • Thinking Speed: 99.9% of maximum")
+    print("  • State Recognition: 10ms")
+    print("  • Learning Speed: 4x normal")
     print("="*70)
     print("BEHAVIOR:")
     print("  • Instant reactions when close")

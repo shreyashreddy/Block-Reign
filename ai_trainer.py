@@ -1,50 +1,46 @@
 #!/usr/bin/env python3
-"""
-Advanced AI Trainer with Reinforcement Learning
-"""
-
 import json
 import os
 import random
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.optim as optim
+import torch # type: ignore
+import torch.nn as nn # type: ignore
+import torch.optim as optim # type: ignore
 from collections import deque, namedtuple
 import pickle
 from datetime import datetime
 
-# Define experience tuple
+# Define experience tuple 💭
 Experience = namedtuple('Experience', 
                        ['state', 'action', 'reward', 'next_state', 'done'])
 
 class ReplayBuffer:
     """Experience replay buffer for reinforcement learning"""
     def __init__(self, capacity=10000):
-        self.buffer = deque(maxlen=capacity)
+        self.buffer = deque(maxlen=capacity) # 💾 Buffer storage
     
     def push(self, experience):
         """Add experience to buffer"""
-        self.buffer.append(experience)
+        self.buffer.append(experience) # ➕ Append experience
     
     def sample(self, batch_size):
         """Sample random batch of experiences"""
-        if len(self.buffer) < batch_size:
+        if (len(self.buffer) < batch_size): # ❌ Not enough data
             return None
         
-        indices = np.random.choice(len(self.buffer), batch_size, replace=False)
-        batch = [self.buffer[i] for i in indices]
+        indices = np.random.choice(len(self.buffer), batch_size, replace=False) # 🎲 Random indices
+        batch = [self.buffer[i] for i in indices] # 📦 Collect batch
         
-        states = torch.FloatTensor([exp.state for exp in batch])
-        actions = torch.LongTensor([exp.action for exp in batch])
-        rewards = torch.FloatTensor([exp.reward for exp in batch])
-        next_states = torch.FloatTensor([exp.next_state for exp in batch])
-        dones = torch.FloatTensor([exp.done for exp in batch])
+        states = torch.FloatTensor([exp.state for exp in batch]) # 🔢 State tensors
+        actions = torch.LongTensor([exp.action for exp in batch]) # 🚀 Action tensors
+        rewards = torch.FloatTensor([exp.reward for exp in batch]) # 💰 Reward tensors
+        next_states = torch.FloatTensor([exp.next_state for exp in batch]) # ➡️ Next state tensors
+        dones = torch.FloatTensor([exp.done for exp in batch]) # ✅ Done tensors
         
-        return states, actions, rewards, next_states, dones
+        return states, actions, rewards, next_states, dones # 📤 Return batch
     
     def __len__(self):
-        return len(self.buffer)
+        return len(self.buffer) # 📏 Buffer size
 
 class DQN(nn.Module):
     """Deep Q-Network for AI decision making"""
@@ -52,150 +48,299 @@ class DQN(nn.Module):
         super(DQN, self).__init__()
         
         self.network = nn.Sequential(
-            nn.Linear(state_size, hidden_size),
-            nn.ReLU(),
-            nn.Linear(hidden_size, hidden_size),
-            nn.ReLU(),
-            nn.Linear(hidden_size, hidden_size),
-            nn.ReLU(),
-            nn.Linear(hidden_size, action_size)
+            nn.Linear(state_size, hidden_size), # 🧱 Input layer
+            nn.ReLU(), # ✨ Activation function
+            nn.Linear(hidden_size, hidden_size), # 🧱 Hidden layer
+            nn.ReLU(), # ✨ Activation function
+            nn.Linear(hidden_size, hidden_size), # 🧱 Hidden layer
+            nn.ReLU(), # ✨ Activation function
+            nn.Linear(hidden_size, action_size) # 🧱 Output layer
         )
         
         self.value_stream = nn.Sequential(
-            nn.Linear(hidden_size, hidden_size),
-            nn.ReLU(),
-            nn.Linear(hidden_size, 1)
+            nn.Linear(hidden_size, hidden_size), # 🧱 Value hidden
+            nn.ReLU(), # ✨ Activation
+            nn.Linear(hidden_size, 1) # 🧱 Value output
         )
         
         self.advantage_stream = nn.Sequential(
-            nn.Linear(hidden_size, hidden_size),
-            nn.ReLU(),
-            nn.Linear(hidden_size, action_size)
+            nn.Linear(hidden_size, hidden_size), # 🧱 Adv hidden
+            nn.ReLU(), # ✨ Activation
+            nn.Linear(hidden_size, action_size) # 🧱 Adv output
         )
     
     def forward(self, x):
-        x = self.network(x)
+        x = self.network(x) # 🧠 Process input
         
-        value = self.value_stream(x)
-        advantages = self.advantage_stream(x)
+        value = self.value_stream(x) # 📊 Calculate value
+        advantages = self.advantage_stream(x) # 📈 Calculate advantages
         
         # Dueling DQN: Q(s,a) = V(s) + A(s,a) - mean(A(s,a))
-        q_values = value + (advantages - advantages.mean(dim=1, keepdim=True))
+        q_values = value + (advantages - advantages.mean(dim=1, keepdim=True)) # 🧮 Q-value calculation
         
-        return q_values
+        return q_values # ➡️ Return Q-values
 
 class AdvancedAITrainer:
     """Advanced AI trainer with reinforcement learning"""
     def __init__(self):
-        self.state_size = 6
-        self.action_size = 5
-        self.hidden_size = 128
+        self.state_size = 6 # 📏 State dimension
+        self.action_size = 5 # 📏 Action dimension
+        self.hidden_size = 128 # 📏 Hidden layer size
         
         # Initialize networks
-        self.policy_net = DQN(self.state_size, self.action_size, self.hidden_size)
-        self.target_net = DQN(self.state_size, self.action_size, self.hidden_size)
-        self.target_net.load_state_dict(self.policy_net.state_dict())
+        self.policy_net = DQN(self.state_size, self.action_size, self.hidden_size) # 🤖 Policy network
+        self.target_net = DQN(self.state_size, self.action_size, self.hidden_size) # 🎯 Target network
+        self.target_net.load_state_dict(self.policy_net.state_dict()) # 🔄 Copy weights
         
         # Initialize optimizer and replay buffer
-        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=0.001)
-        self.replay_buffer = ReplayBuffer(capacity=10000)
+        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=0.001) # ⚙️ Adam optimizer
+        self.replay_buffer = ReplayBuffer(capacity=10000) # 📦 Replay buffer
         
         # Training parameters
-        self.batch_size = 64
-        self.gamma = 0.99  # Discount factor
-        self.tau = 0.005  # Soft update parameter
-        self.epsilon = 1.0  # Exploration rate
-        self.epsilon_min = 0.01
-        self.epsilon_decay = 0.995
+        self.batch_size = 64 # 🔢 Batch size
+        self.gamma = 0.99  # Discount factor 📉
+        self.tau = 0.005  # Soft update parameter 🛠️
+        self.epsilon = 1.0  # Exploration rate 🌟
+        self.epsilon_min = 0.01 # Minimum exploration 🤏
+        self.epsilon_decay = 0.995 # Exploration decay rate 📉
         
         # Checkpoint paths
-        self.checkpoint_dir = 'training/models'
-        self.replay_buffer_file = os.path.join(self.checkpoint_dir, 'replay_buffer.pkl')
-        self.policy_net_file = os.path.join(self.checkpoint_dir, 'policy_net.pth')
-        self.target_net_file = os.path.join(self.checkpoint_dir, 'target_net.pth')
-        self.training_log_file = os.path.join(self.checkpoint_dir, 'training_log.json')
+        self.checkpoint_dir = 'training/models' # 📂 Checkpoint directory
+        self.replay_buffer_file = os.path.join(self.checkpoint_dir, 'replay_buffer.pkl') # 💾 Replay buffer file
+        self.policy_net_file = os.path.join(self.checkpoint_dir, 'policy_net.pth') # 💾 Policy net file
+        self.target_net_file = os.path.join(self.checkpoint_dir, 'target_net.pth') # 💾 Target net file
+        self.training_log_file = os.path.join(self.checkpoint_dir, 'training_log.json') # 📈 Training log file
         
         # Load from checkpoint if exists
-        self.load_checkpoint()
+        self.load_checkpoint() # 🗄️ Load existing checkpoint
         
         # Training statistics
         self.training_stats = {
-            'episodes': 0,
-            'total_reward': 0,
-            'loss_history': [],
-            'epsilon_history': [],
-            'success_rate': 0
+            'episodes': 0, # 🔢 Episode count
+            'total_reward': 0, # 💰 Total reward
+            'loss_history': [], # 📉 Loss history
+            'epsilon_history': [], # 🌟 Epsilon history
+            'success_rate': 0 # 🏆 Success rate
         }
     
     def load_checkpoint(self):
         """Load model and replay buffer from checkpoint"""
         try:
-            if os.path.exists(self.policy_net_file):
-                self.policy_net.load_state_dict(torch.load(self.policy_net_file))
-                print("✓ Loaded policy network from checkpoint")
+            if os.path.exists(self.policy_net_file): # 🔍 Policy net exists
+                self.policy_net.load_state_dict(torch.load(self.policy_net_file)) # 💽 Load policy weights
+                print("✓ Loaded policy network from checkpoint") # ✅ Success message
             
-            if os.path.exists(self.target_net_file):
-                self.target_net.load_state_dict(torch.load(self.target_net_file))
-                print("✓ Loaded target network from checkpoint")
+            if os.path.exists(self.target_net_file): # 🔍 Target net exists
+                self.target_net.load_state_dict(torch.load(self.target_net_file)) # 💽 Load target weights
+                print("✓ Loaded target network from checkpoint") # ✅ Success message
             
-            if os.path.exists(self.replay_buffer_file):
-                with open(self.replay_buffer_file, 'rb') as f:
-                    self.replay_buffer.buffer = pickle.load(f)
-                print(f"✓ Loaded {len(self.replay_buffer)} experiences from replay buffer")
+            if os.path.exists(self.replay_buffer_file): # 🔍 Replay buffer exists
+                with open(self.replay_buffer_file, 'rb') as f: # 📖 Open buffer file
+                    self.replay_buffer.buffer = pickle.load(f) # 💽 Load buffer data
+                print(f"✓ Loaded {len(self.replay_buffer)} experiences from replay buffer") # ✅ Success message
             
-            if os.path.exists(self.training_log_file):
-                with open(self.training_log_file, 'r') as f:
-                    self.training_stats = json.load(f)
-                print("✓ Loaded training statistics")
+            if os.path.exists(self.training_log_file): # 🔍 Log file exists
+                with open(self.training_log_file, 'r') as f: # 📖 Open log file
+                    self.training_stats = json.load(f) # 💽 Load stats
+                print("✓ Loaded training statistics") # ✅ Success message
                 
-        except Exception as e:
-            print(f"Error loading checkpoint: {e}")
+        except Exception as e: # ❌ Error occurred
+            print(f"Error loading checkpoint: {e}") # 😥 Error message
     
     def save_checkpoint(self):
         """Save model and replay buffer to checkpoint"""
         try:
-            os.makedirs(self.checkpoint_dir, exist_ok=True)
+            os.makedirs(self.checkpoint_dir, exist_ok=True) # 📂 Create directory
             
             # Save networks
-            torch.save(self.policy_net.state_dict(), self.policy_net_file)
-            torch.save(self.target_net.state_dict(), self.target_net_file)
+            torch.save(self.policy_net.state_dict(), self.policy_net_file) # 💾 Save policy
+            torch.save(self.target_net.state_dict(), self.target_net_file) # 💾 Save target
             
             # Save replay buffer
-            with open(self.replay_buffer_file, 'wb') as f:
-                pickle.dump(list(self.replay_buffer.buffer), f)
+            with open(self.replay_buffer_file, 'wb') as f: # 🗄️ Open buffer file
+                pickle.dump(list(self.replay_buffer.buffer), f) # 💾 Save buffer
             
             # Save training statistics
-            with open(self.training_log_file, 'w') as f:
-                json.dump(self.training_stats, f, indent=2)
+            with open(self.training_log_file, 'w') as f: # 🗄️ Open log file
+                json.dump(self.training_stats, f, indent=2) # 💾 Save stats
             
             # Create timestamped backup
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            backup_dir = os.path.join('training/checkpoints', timestamp)
-            os.makedirs(backup_dir, exist_ok=True)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") # ⏰ Generate timestamp
+            backup_dir = os.path.join('training/checkpoints', timestamp) # 📂 Backup directory
+            os.makedirs(backup_dir, exist_ok=True) # 📂 Create backup dir
             
-            torch.save(self.policy_net.state_dict(), os.path.join(backup_dir, 'policy_net.pth'))
+            torch.save(self.policy_net.state_dict(), os.path.join(backup_dir, 'policy_net.pth')) # 💾 Backup policy
             
-            print("✓ Checkpoint saved successfully")
-            return True
+            print("✓ Checkpoint saved successfully") # ✅ Success message
+            return True # 👍 Success
             
-        except Exception as e:
-            print(f"Error saving checkpoint: {e}")
-            return False
+        except Exception as e: # ❌ Error occurred
+            print(f"Error saving checkpoint: {e}") # 😥 Error message
+            return False # 👎 Failure
     
     def get_action(self, state, training=True):
         """Get action using epsilon-greedy policy"""
-        if training and random.random() < self.epsilon:
+        if training and random.random() < self.epsilon: # 🏃 Exploration phase
             # Explore: random action
-            return random.randint(0, self.action_size - 1)
+            return random.randint(0, self.action_size - 1) # 🎲 Random action
         
         # Exploit: use policy network
-        with torch.no_grad():
-            state_tensor = torch.FloatTensor(state).unsqueeze(0)
-            q_values = self.policy_net(state_tensor)
-            action = q_values.argmax().item()
+        with torch.no_grad(): # 🚫 Disable gradient calculation
+            state_tensor = torch.FloatTensor(state).unsqueeze(0) # 🔢 Convert state tensor
+            q_values = self.policy_net(state_tensor) # 🧠 Predict Q-values
+            action = q_values.argmax().item() # 🏆 Choose best action
         
-        return action
-    
+        return action # ➡️ Return action
+
+    import torch.nn as nn # type: ignore
+import torch # type: ignore
+import numpy as np
+import os
+
+class Experience:
+    def __init__(self, state, action, reward, next_state, done):
+        self.state = state
+        self.action = action
+        self.reward = reward
+        self.next_state = next_state
+        self.done = done
+
+class ReplayBuffer:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.buffer = []
+        self.position = 0
+
+    def push(self, experience):
+        if len(self.buffer) < self.capacity:
+            self.buffer.append(experience)
+        else:
+            self.buffer[self.position] = experience
+            self.position = (self.position + 1) % self.capacity
+
+    def sample(self, batch_size):
+        if len(self.buffer) < batch_size:
+            return None
+        batch = np.random.choice(len(self.buffer), batch_size, replace=False)
+        states = torch.tensor([self.buffer[i].state for i in batch], dtype=torch.float32)
+        actions = torch.tensor([self.buffer[i].action for i in batch], dtype=torch.int64)
+        rewards = torch.tensor([self.buffer[i].reward for i in batch], dtype=torch.float32)
+        next_states = torch.tensor([self.buffer[i].next_state for i in batch], dtype=torch.float32)
+        dones = torch.tensor([self.buffer[i].done for i in batch], dtype=torch.float32)
+        return states, actions, rewards, next_states, dones
+
+    def __len__(self):
+        return len(self.buffer)
+
+class PolicyNet(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(PolicyNet, self).__init__()
+        self.fc1 = nn.Linear(input_size, 128)
+        self.fc2 = nn.Linear(128, 128)
+        self.fc3 = nn.Linear(128, output_size)
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = torch.relu(self.fc2(x))
+        return self.fc3(x)
+
+class TargetNet(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(TargetNet, self).__init__()
+        self.fc1 = nn.Linear(input_size, 128)
+        self.fc2 = nn.Linear(128, 128)
+        self.fc3 = nn.Linear(128, output_size)
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = torch.relu(self.fc2(x))
+        return self.fc3(x)
+
+class AdvancedAITrainer:
+    def __init__(self, capacity=10000, batch_size=64, gamma=0.99, tau=0.001, epsilon_start=1.0, epsilon_end=0.01, epsilon_decay=0.995, lr=0.0001):
+        self.input_size = 6  # state size
+        self.output_size = 5 # action size
+        self.capacity = capacity
+        self.batch_size = batch_size
+        self.gamma = gamma
+        self.tau = tau
+        self.epsilon = epsilon_start
+        self.epsilon_end = epsilon_end
+        self.epsilon_decay = epsilon_decay
+        self.lr = lr
+        
+        self.policy_net = PolicyNet(self.input_size, self.output_size)
+        self.target_net = TargetNet(self.input_size, self.output_size)
+        self.target_net.load_state_dict(self.policy_net.state_dict())
+        self.target_net.eval()
+        
+        self.optimizer = torch.optim.Adam(self.policy_net.parameters(), lr=self.lr)
+        self.replay_buffer = ReplayBuffer(self.capacity)
+        
+        self.policy_net_file = "policy_net.pth"
+        self.target_net_file = "target_net.pth"
+        self.optimizer_file = "optimizer.pth"
+        self.replay_buffer_file = "replay_buffer.pth"
+        self.training_stats_file = "training_stats.pth"
+        
+        self.training_stats = {
+            'episodes': 0,
+            'loss_history': [],
+            'epsilon_history': [],
+            'success_rate': 0.0  # Placeholder
+        }
+        
+        self.load_checkpoint()
+        
+    def load_checkpoint(self):
+        if os.path.exists(self.policy_net_file):
+            self.policy_net.load_state_dict(torch.load(self.policy_net_file))
+            self.target_net.load_state_dict(torch.load(self.target_net_file))
+            self.optimizer.load_state_dict(torch.load(self.optimizer_file))
+            
+            # Load replay buffer
+            if os.path.exists(self.replay_buffer_file):
+                with open(self.replay_buffer_file, 'rb') as f:
+                    buffer_data = pickle.load(f)
+                    self.replay_buffer.buffer = buffer_data['buffer']
+                    self.replay_buffer.position = buffer_data['position']
+            
+            # Load training stats
+            if os.path.exists(self.training_stats_file):
+                self.training_stats = torch.load(self.training_stats_file)
+                self.epsilon = self.training_stats.get('epsilon', self.epsilon) # Load epsilon if present
+
+            print("Checkpoint loaded successfully.")
+        else:
+            print("No checkpoint found. Starting fresh.")
+
+    def save_checkpoint(self):
+        torch.save(self.policy_net.state_dict(), self.policy_net_file)
+        torch.save(self.target_net.state_dict(), self.target_net_file)
+        torch.save(self.optimizer.state_dict(), self.optimizer_file)
+        
+        # Save replay buffer
+        buffer_data = {
+            'buffer': self.replay_buffer.buffer,
+            'position': self.replay_buffer.position
+        }
+        with open(self.replay_buffer_file, 'wb') as f:
+            pickle.dump(buffer_data, f)
+        
+        # Save training stats
+        self.training_stats['epsilon'] = self.epsilon # Update epsilon in stats
+        torch.save(self.training_stats, self.training_stats_file)
+        print("Checkpoint saved.")
+
+    def get_action(self, state, training=True):
+        if training and np.random.rand() <= self.epsilon:
+            return np.random.randint(self.output_size)
+        else:
+            state = torch.tensor(state, dtype=torch.float32).unsqueeze(0)
+            with torch.no_grad():
+                action_values = self.policy_net(state)
+            return torch.argmax(action_values, dim=1).item()
+
     def add_experience(self, state, action, reward, next_state, done):
         """Add experience to replay buffer"""
         experience = Experience(state, action, reward, next_state, done)

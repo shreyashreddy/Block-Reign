@@ -26,12 +26,12 @@ class UltraFastAI:
         self.action_to_idx = {a: i for i, a in enumerate(self.actions)}
         self.idx_to_action = {i: a for i, a in enumerate(self.actions)}
         
-        # Reaction time parameters (forced 10ms AI)
-        self.base_reaction_time = 0.01  # 10ms base reaction
+        # Reaction time parameters (very fast AI)
+        self.base_reaction_time = 0.002  # 3ms base reaction (much faster)
         self.reaction_variance = 0.0    # no variance (fixed)
         
         # Thinking speed (how fast AI processes decisions)
-        self.thinking_speed = 0.995  # near-instant thinking
+        self.thinking_speed = 0.999  # much faster thinking
         
         # Q-learning parameters (optimized for fast learning)
         self.q_table = {}
@@ -65,7 +65,7 @@ class UltraFastAI:
         
         print(f"⚡ ULTRA-FAST AI Initialized!")
         print(f"   Target Reaction Time: {self.base_reaction_time*1000:.0f}ms ± {self.reaction_variance*1000:.0f}ms")
-        print(f"   Thinking Speed: {self.thinking_speed*100:.0f}%")
+        print(f"   Thinking Speed: {self.thinking_speed*100:.1f}%")
         print(f"   Record: {self.wins} wins, {self.losses} losses")
     
     def get_state_key(self, game_state):
@@ -140,20 +140,19 @@ class UltraFastAI:
         
         # Base reaction time
         reaction = self.base_reaction_time
-        
+
         # Adjust based on distance (closer = faster reaction)
         if distance <= 2:
-            reaction *= 0.6  # 40% faster when very close
+            reaction *= 0.5  # 50% faster when very close
         elif distance <= 4:
-            reaction *= 0.8  # 20% faster when close
-        
+            reaction *= 0.75  # 25% faster when close
+
         # Adjust based on thinking speed
-        reaction *= (1.5 - self.thinking_speed)  # Faster thinking = faster reaction
-        
-        # No variance — enforce fixed 10ms reaction
-        # (Overrides other multipliers to ensure 10ms timing)
-        reaction = 0.01
-        
+        reaction *= max(0.5, (1.5 - self.thinking_speed))  # Faster thinking reduces reaction
+
+        # Ensure reaction is never below base_reaction_time
+        reaction = max(self.base_reaction_time, reaction)
+
         return reaction
     
     def should_wait_or_act(self, game_state):
@@ -167,8 +166,8 @@ class UltraFastAI:
         # Otherwise, wait calculated reaction time
         wait_time = self.calculate_reaction_time(game_state)
         
-        # 30% chance to act immediately anyway (impulsive)
-        if random.random() < 0.3:
+        # Increase chance to act immediately (more aggressive/faster)
+        if random.random() < 0.6:
             return False, 0
         
         return True, wait_time

